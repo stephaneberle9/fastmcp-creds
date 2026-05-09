@@ -12,6 +12,7 @@ and testing them locally before pushing to GitHub.
   - [Type checking](#type-checking)
 - [Testing](#testing)
 - [Release Process](#release-process)
+  - [Testing a release first](#testing-a-release-first)
 - [Building Packages Locally](#building-packages-locally)
 - [Dependency Management](#dependency-management)
 
@@ -78,10 +79,17 @@ to `htmlcov/`.
    git push origin v0.1.0
    ```
 
-3. Create a GitHub release from the tag and add release notes.
+3. Create a GitHub release from the tag and add release notes. The
+   `publish.yml` workflow triggers automatically and uploads the package to
+   PyPI.
 
 The package version is derived automatically from the git tag by
 [uv-dynamic-versioning](https://github.com/nicoddemus/uv-dynamic-versioning).
+
+### Testing a release first
+
+To publish to TestPyPI before a real release, trigger the `publish-test.yml`
+workflow manually from the **Actions** tab on GitHub (select **Run workflow**).
 
 ## Building Packages Locally
 
