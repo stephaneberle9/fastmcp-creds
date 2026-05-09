@@ -1,0 +1,93 @@
+[project]
+name = "fastmcp-creds"
+dynamic = ["version"]
+description = "Credential provider chain for FastMCP servers: keyring, environment variables, and HTTP Basic Auth header providers with unresolved placeholder detection."
+readme = "README.md"
+authors = [
+    { name = "Stephan Eberle", email = "stephaneberle9@gmail.com" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "fastmcp>=3.2.3",
+]
+
+[project.optional-dependencies]
+keyring = ["keyring>=25.0.0"]
+
+[dependency-groups]
+dev = [
+    "ty",
+    "pre-commit>=4.3.0",
+    "ruff",
+]
+test = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-mock>=3.10.0",
+    "keyring>=25.0.0",
+]
+
+[project.scripts]
+# No CLI entry point — library only
+
+[build-system]
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
+
+[tool.uv-dynamic-versioning]
+enable = true
+vcs = "git"
+style = "pep440"
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
+
+[tool.hatch.build.targets.wheel]
+sources = ["src"]
+exclude = ["*.log"]
+
+[tool.hatch.build.targets.sdist]
+sources = ["src"]
+exclude = ["*.log"]
+
+[tool.uv]
+default-groups = ["dev", "test"]
+
+[tool.deptry]
+exclude = ["*.log", ".venv/"]
+
+[tool.ruff.lint]
+extend-select = ["I", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401", "I001", "RUF013"]
+
+[tool.codespell]
+skip = "*.lock,pyproject.toml,*PythonImportHelper*"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+    "--cov=fastmcp_creds",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+]
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["tests/*", "**/__pycache__/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
