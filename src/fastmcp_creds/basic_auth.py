@@ -53,7 +53,9 @@ class BasicAuthCredentialsProvider:
     def __init__(self, custom_header_name: str | None = None):
         self.custom_header_name = custom_header_name
 
-    def _parse_basic_auth_header(self, header_name: str, header_value: str) -> tuple[str | None, str | None]:
+    def _parse_basic_auth_header(
+        self, header_name: str, header_value: str
+    ) -> tuple[str | None, str | None]:
         if not header_value:
             return None, None
 
@@ -68,7 +70,10 @@ class BasicAuthCredentialsProvider:
             else:
                 if " " in header_value or "\t" in header_value:
                     scheme = header_value.split()[0]
-                    raise BasicAuthError(f"Unsupported scheme '{scheme}', only 'Basic' is supported", header_name)
+                    raise BasicAuthError(
+                        f"Unsupported scheme '{scheme}', only 'Basic' is supported",
+                        header_name,
+                    )
                 else:
                     raise BasicAuthError(
                         "Expected 'Basic <base64-encoded credentials string>' or '<base64-encoded credentials string>'",
@@ -76,19 +81,27 @@ class BasicAuthCredentialsProvider:
                     )
 
         if not encoded_credentials:
-            raise BasicAuthError("Missing base64-encoded credentials string", header_name)
+            raise BasicAuthError(
+                "Missing base64-encoded credentials string", header_name
+            )
 
         try:
             decoded_credentials = base64.b64decode(encoded_credentials).decode("utf-8")
         except (binascii.Error, UnicodeDecodeError) as e:
-            raise BasicAuthError(f"Failed to decode base64-encoded credentials string: {e}", header_name)
+            raise BasicAuthError(
+                f"Failed to decode base64-encoded credentials string: {e}", header_name
+            )
 
         if ":" not in decoded_credentials:
-            raise BasicAuthError("Invalid credentials string - missing colon separator", header_name)
+            raise BasicAuthError(
+                "Invalid credentials string - missing colon separator", header_name
+            )
 
         username, password = decoded_credentials.split(":", 1)
         if not username or not password:
-            raise BasicAuthError("Invalid credentials string - empty username or password", header_name)
+            raise BasicAuthError(
+                "Invalid credentials string - empty username or password", header_name
+            )
 
         return username, password
 
@@ -97,23 +110,35 @@ class BasicAuthCredentialsProvider:
             headers = get_http_headers()
 
             if self.custom_header_name:
-                value = headers.get(self.custom_header_name.lower()) or headers.get(self.custom_header_name)
+                value = headers.get(self.custom_header_name.lower()) or headers.get(
+                    self.custom_header_name
+                )
                 if value:
                     if is_unresolved_placeholder_value(value):
-                        logger.debug(f"Ignoring unresolved placeholder in '{self.custom_header_name}' header")
+                        logger.debug(
+                            f"Ignoring unresolved placeholder in '{self.custom_header_name}' header"
+                        )
                         return None, None
-                    logger.debug(f"Extracting basic auth credentials from '{self.custom_header_name}' header")
+                    logger.debug(
+                        f"Extracting basic auth credentials from '{self.custom_header_name}' header"
+                    )
                     try:
-                        return self._parse_basic_auth_header(self.custom_header_name, value)
+                        return self._parse_basic_auth_header(
+                            self.custom_header_name, value
+                        )
                     except BasicAuthError:
                         pass  # fall through to standard Authorization header
 
             value = headers.get("authorization") or headers.get("Authorization")
             if value:
                 if is_unresolved_placeholder_value(value):
-                    logger.debug("Ignoring unresolved placeholder in 'Authorization' header")
+                    logger.debug(
+                        "Ignoring unresolved placeholder in 'Authorization' header"
+                    )
                     return None, None
-                logger.debug("Extracting basic auth credentials from 'Authorization' header")
+                logger.debug(
+                    "Extracting basic auth credentials from 'Authorization' header"
+                )
                 try:
                     return self._parse_basic_auth_header("Authorization", value)
                 except BasicAuthError:
@@ -122,5 +147,7 @@ class BasicAuthCredentialsProvider:
             logger.debug("No valid Basic Auth header found")
             return None, None
         except Exception as e:
-            logger.error(f"Failed to retrieve credentials from authorization headers: {e}")
+            logger.error(
+                f"Failed to retrieve credentials from authorization headers: {e}"
+            )
             return None, None

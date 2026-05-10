@@ -22,7 +22,11 @@ Usage::
 
 from importlib.metadata import PackageNotFoundError, version
 
-from .basic_auth import BasicAuthCredentialsProvider, BasicAuthError, is_unresolved_placeholder_value
+from .basic_auth import (
+    BasicAuthCredentialsProvider,
+    BasicAuthError,
+    is_unresolved_placeholder_value,
+)
 from .chain import CredentialsProviderChain
 from .env import EnvironmentCredentialsProvider
 from .header import CustomHeaderCredentialsProvider

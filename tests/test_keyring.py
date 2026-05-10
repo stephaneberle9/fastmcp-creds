@@ -17,7 +17,9 @@ class TestKeyringCredentialsProvider:
         mock_keyring.get_password.side_effect = lambda service, key: (
             "alice" if key == "login" else "secret" if key == "token" else None
         )
-        provider = KeyringCredentialsProvider("my-service", username_key="login", password_key="token")
+        provider = KeyringCredentialsProvider(
+            "my-service", username_key="login", password_key="token"
+        )
         assert provider.get_credentials() == ("alice", "secret")
 
     @patch("fastmcp_creds.keyring._keyring")

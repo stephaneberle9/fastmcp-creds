@@ -42,7 +42,9 @@ class KeyringCredentialsProvider:
         self.password_key = password_key
 
     @classmethod
-    def for_token(cls, service: str, token_key: str = "token") -> "KeyringCredentialsProvider":
+    def for_token(
+        cls, service: str, token_key: str = "token"
+    ) -> "KeyringCredentialsProvider":
         """Create a token-mode provider that reads a single keyring entry."""
         instance = cls.__new__(cls)
         instance.service = service
@@ -55,7 +57,9 @@ class KeyringCredentialsProvider:
             logger.debug(f"Reading token from keyring service '{self.service}'")
             token = _keyring.get_password(self.service, self.password_key)
             if token:
-                logger.debug(f"Successfully retrieved token '{token[:7]}***' from keyring service '{self.service}'")
+                logger.debug(
+                    f"Successfully retrieved token '{token[:7]}***' from keyring service '{self.service}'"
+                )
                 return token, token
             logger.debug(f"No token found in keyring service '{self.service}'")
             return None, None
@@ -64,7 +68,9 @@ class KeyringCredentialsProvider:
         username = _keyring.get_password(self.service, self.username_key)
         password = _keyring.get_password(self.service, self.password_key)
         if username and password:
-            logger.debug(f"Successfully retrieved credentials for '{username[:7]}***' from keyring service '{self.service}'")
+            logger.debug(
+                f"Successfully retrieved credentials for '{username[:7]}***' from keyring service '{self.service}'"
+            )
             return username, password
         logger.debug(f"No credentials found in keyring service '{self.service}'")
         return None, None

@@ -8,8 +8,8 @@ and testing them locally before pushing to GitHub.
   - [Prerequisites](#prerequisites)
   - [Clone and install](#clone-and-install)
 - [Code Quality](#code-quality)
-  - [Check and fix all files](#check-and-fix-all-files)
-  - [Type checking](#type-checking)
+  - [Enable automatic execution on git commit](#enable-automatic-execution-on-git-commit)
+  - [Manual execution](#manual-execution)
 - [Testing](#testing)
 - [Release Process](#release-process)
   - [Testing a release first](#testing-a-release-first)
@@ -33,20 +33,30 @@ uv sync
 
 ## Code Quality
 
-The project uses [ruff](https://docs.astral.sh/ruff/) for linting and
-formatting, and [ty](https://github.com/astral-sh/ty) for type checking.
+This project uses `pre-commit` hooks for static checks to maintain high code
+quality standards:
 
-### Check and fix all files
+| Hook | Purpose |
+| ---- | ------- |
+| `ruff-check` | Python linting (with auto-fix) |
+| `ruff-format` | Python code formatting |
+
+### Enable automatic execution on git commit
 
 ```bash
-uv run ruff check --fix src tests
-uv run ruff format src tests
+uv run pre-commit install
 ```
 
-### Type checking
+### Manual execution
 
 ```bash
-uv run ty check src
+# Run all checks on all files
+uv run pre-commit run --all-files
+
+# Run individual tools
+uv run ruff format src tests      # Code formatting
+uv run ruff check --fix src tests # Linting with auto-fix
+uv run ty check src               # Type checking
 ```
 
 ## Testing

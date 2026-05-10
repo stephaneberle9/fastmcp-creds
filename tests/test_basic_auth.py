@@ -40,16 +40,24 @@ class TestBasicAuthCredentialsProvider:
             "x-custom-auth": f"Basic {_b64('from-custom:pass1')}",
             "authorization": f"Basic {_b64('from-standard:pass2')}",
         }
-        assert BasicAuthCredentialsProvider("X-Custom-Auth").get_credentials() == ("from-custom", "pass1")
+        assert BasicAuthCredentialsProvider("X-Custom-Auth").get_credentials() == (
+            "from-custom",
+            "pass1",
+        )
 
     @patch("fastmcp_creds.basic_auth.get_http_headers")
     def test_falls_back_to_standard_header(self, mock_headers):
         mock_headers.return_value = {"authorization": f"Basic {_b64('alice:secret')}"}
-        assert BasicAuthCredentialsProvider("X-Missing").get_credentials() == ("alice", "secret")
+        assert BasicAuthCredentialsProvider("X-Missing").get_credentials() == (
+            "alice",
+            "secret",
+        )
 
     @patch("fastmcp_creds.basic_auth.get_http_headers")
     def test_bearer_basic_variant_accepted(self, mock_headers):
-        mock_headers.return_value = {"authorization": f"Bearer Basic {_b64('alice:secret')}"}
+        mock_headers.return_value = {
+            "authorization": f"Bearer Basic {_b64('alice:secret')}"
+        }
         assert BasicAuthCredentialsProvider().get_credentials() == ("alice", "secret")
 
     @patch("fastmcp_creds.basic_auth.get_http_headers")
@@ -65,9 +73,13 @@ class TestBasicAuthCredentialsProvider:
     def test_parse_missing_colon_raises(self):
         provider = BasicAuthCredentialsProvider()
         with pytest.raises(BasicAuthError, match="missing colon"):
-            provider._parse_basic_auth_header("Authorization", f"Basic {_b64('nocolon')}")
+            provider._parse_basic_auth_header(
+                "Authorization", f"Basic {_b64('nocolon')}"
+            )
 
     def test_parse_empty_username_raises(self):
         provider = BasicAuthCredentialsProvider()
         with pytest.raises(BasicAuthError, match="empty username"):
-            provider._parse_basic_auth_header("Authorization", f"Basic {_b64(':password')}")
+            provider._parse_basic_auth_header(
+                "Authorization", f"Basic {_b64(':password')}"
+            )

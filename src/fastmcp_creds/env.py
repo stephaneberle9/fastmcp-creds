@@ -33,7 +33,9 @@ class EnvironmentCredentialsProvider:
             logger.debug("Reading token from environment variable")
             token = os.environ.get(self.password_env_var_name)
             if token:
-                logger.debug(f"Successfully retrieved token '{token[:7]}***' from environment variable")
+                logger.debug(
+                    f"Successfully retrieved token '{token[:7]}***' from environment variable"
+                )
                 return token, token
             logger.debug("No token found in environment variable")
             return None, None
@@ -42,7 +44,9 @@ class EnvironmentCredentialsProvider:
         username = os.environ.get(self.username_env_var_name)
         password = os.environ.get(self.password_env_var_name)
         if username and password:
-            logger.debug(f"Successfully retrieved credentials for '{username[:7]}***' from environment variables")
+            logger.debug(
+                f"Successfully retrieved credentials for '{username[:7]}***' from environment variables"
+            )
             return username, password
         logger.debug("No credentials found in environment variables")
         return None, None
