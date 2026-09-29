@@ -141,7 +141,15 @@ token, _ = provider.get_credentials()
 # Custom key names
 provider = KeyringCredentialsProvider("my-service", username_key="user", password_key="secret")
 provider = KeyringCredentialsProvider.for_token("my-service", token_key="jwt")
+
+# Custom lookup timeout in seconds (default 5), or None to wait indefinitely
+provider = KeyringCredentialsProvider("my-service", timeout=10)
 ```
+
+The keychain lookup is bounded by a timeout, so a locked or unresponsive
+keychain (e.g. one waiting for an unlock prompt in a headless session) cannot
+stall server startup. On timeout, a warning is logged and `(None, None)` is
+returned, so a `CredentialsProviderChain` falls through to its next provider.
 
 ## API Reference
 
@@ -198,12 +206,13 @@ single header; returns it as both elements of the tuple.
 
 ### `KeyringCredentialsProvider`
 
-`KeyringCredentialsProvider(service, username_key="username", password_key="password")`
+`KeyringCredentialsProvider(service, username_key="username", password_key="password", timeout=5.0)`
 — reads credentials stored in the OS keychain under the given service name.
-Requires `fastmcp-creds[keyring]`.
+Returns `(None, None)` if the keychain does not answer within `timeout` seconds
+(`None` waits indefinitely). Requires `fastmcp-creds[keyring]`.
 
-`KeyringCredentialsProvider.for_token(service, token_key="token")` — reads a
-single keychain entry.
+`KeyringCredentialsProvider.for_token(service, token_key="token", timeout=5.0)`
+— reads a single keychain entry.
 
 | Method | Description |
 | --- | --- |

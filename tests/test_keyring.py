@@ -1,4 +1,8 @@
+import threading
+import time
 from unittest.mock import patch
+
+import pytest
 
 from fastmcp_creds.keyring import KeyringCredentialsProvider
 
@@ -62,3 +66,45 @@ class TestKeyringCredentialsProvider:
         provider = KeyringCredentialsProvider.for_token("my-service", token_key="jwt")
         provider.get_credentials()
         mock_keyring.get_password.assert_called_once_with("my-service", "jwt")
+
+    @patch("fastmcp_creds.keyring._keyring")
+    def test_hung_keyring_times_out_with_no_credentials(self, mock_keyring):
+        release = threading.Event()
+        mock_keyring.get_password.side_effect = lambda service, key: (
+            release.wait(5) and "never"
+        )
+        provider = KeyringCredentialsProvider("my-service", timeout=0.05)
+        try:
+            started = time.monotonic()
+            assert provider.get_credentials() == (None, None)
+            assert time.monotonic() - started < 1
+        finally:
+            release.set()
+
+    @patch("fastmcp_creds.keyring._keyring")
+    def test_token_mode_hung_keyring_times_out(self, mock_keyring):
+        release = threading.Event()
+        mock_keyring.get_password.side_effect = lambda service, key: (
+            release.wait(5) and "never"
+        )
+        provider = KeyringCredentialsProvider.for_token("my-service", timeout=0.05)
+        try:
+            assert provider.get_credentials() == (None, None)
+        finally:
+            release.set()
+
+    @patch("fastmcp_creds.keyring._keyring")
+    def test_keyring_error_propagates_through_timeout(self, mock_keyring):
+        mock_keyring.get_password.side_effect = RuntimeError("backend broken")
+        provider = KeyringCredentialsProvider("my-service")
+        with pytest.raises(RuntimeError, match="backend broken"):
+            provider.get_credentials()
+
+    @patch("fastmcp_creds.keyring._keyring")
+    def test_no_timeout_reads_in_calling_thread(self, mock_keyring):
+        caller = threading.current_thread()
+        mock_keyring.get_password.side_effect = lambda service, key: (
+            "alice" if threading.current_thread() is caller else None
+        )
+        provider = KeyringCredentialsProvider("my-service", timeout=None)
+        assert provider.get_credentials() == ("alice", "alice")
