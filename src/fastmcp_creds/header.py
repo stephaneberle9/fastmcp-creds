@@ -20,7 +20,7 @@ class CustomHeaderCredentialsProvider:
     """
 
     def __init__(self, username_header_name: str, password_header_name: str):
-        self.username_header_name = username_header_name
+        self.username_header_name: str | None = username_header_name
         self.password_header_name = password_header_name
 
     @classmethod

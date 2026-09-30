@@ -17,7 +17,7 @@ class EnvironmentCredentialsProvider:
     """
 
     def __init__(self, username_env_var_name: str, password_env_var_name: str):
-        self.username_env_var_name = username_env_var_name
+        self.username_env_var_name: str | None = username_env_var_name
         self.password_env_var_name = password_env_var_name
 
     @classmethod

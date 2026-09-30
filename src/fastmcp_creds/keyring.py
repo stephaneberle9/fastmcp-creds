@@ -51,7 +51,7 @@ class KeyringCredentialsProvider:
         timeout: float | None = DEFAULT_KEYRING_TIMEOUT,
     ):
         self.service = service
-        self.username_key = username_key
+        self.username_key: str | None = username_key
         self.password_key = password_key
         self.timeout = timeout
 
