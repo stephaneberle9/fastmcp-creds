@@ -46,7 +46,7 @@ class CustomHeaderCredentialsProvider:
                     token = None
                 if token:
                     logger.debug(
-                        f"Successfully extracted token '{token[:7]}***' from {self.password_header_name} header"
+                        f"Read token from '{self.password_header_name}' header"
                     )
                     return token, token
                 logger.debug(f"No valid '{self.password_header_name}' header found")
@@ -72,7 +72,7 @@ class CustomHeaderCredentialsProvider:
 
             if username and password:
                 logger.debug(
-                    f"Successfully extracted credentials for '{username[:7]}***' from {self.username_header_name} and {self.password_header_name} headers"
+                    f"Read credentials from '{self.username_header_name}' and '{self.password_header_name}' headers"
                 )
                 return username, password
             logger.debug(
@@ -80,5 +80,7 @@ class CustomHeaderCredentialsProvider:
             )
             return None, None
         except Exception as e:
-            logger.error(f"Failed to retrieve credentials from custom headers: {e}")
+            logger.error(
+                f"Failed to retrieve credentials from custom headers: {type(e).__name__}"
+            )
             return None, None

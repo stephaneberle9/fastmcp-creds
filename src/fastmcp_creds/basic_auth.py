@@ -107,7 +107,8 @@ class BasicAuthCredentialsProvider:
 
     def get_credentials(self) -> tuple[str | None, str | None]:
         try:
-            headers = get_http_headers()
+            # FastMCP strips Authorization by default; this provider exists to read it.
+            headers = get_http_headers(include={"authorization"})
 
             if self.custom_header_name:
                 value = headers.get(self.custom_header_name.lower()) or headers.get(
@@ -148,6 +149,6 @@ class BasicAuthCredentialsProvider:
             return None, None
         except Exception as e:
             logger.error(
-                f"Failed to retrieve credentials from authorization headers: {e}"
+                f"Failed to retrieve credentials from authorization headers: {type(e).__name__}"
             )
             return None, None

@@ -35,6 +35,12 @@ class TestBasicAuthCredentialsProvider:
         assert BasicAuthCredentialsProvider().get_credentials() == ("alice", "secret")
 
     @patch("fastmcp_creds.basic_auth.get_http_headers")
+    def test_asks_fastmcp_to_keep_authorization(self, mock_headers):
+        mock_headers.return_value = {}
+        BasicAuthCredentialsProvider().get_credentials()
+        mock_headers.assert_called_once_with(include={"authorization"})
+
+    @patch("fastmcp_creds.basic_auth.get_http_headers")
     def test_custom_header_takes_priority(self, mock_headers):
         mock_headers.return_value = {
             "x-custom-auth": f"Basic {_b64('from-custom:pass1')}",
