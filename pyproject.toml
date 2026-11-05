@@ -8,11 +8,12 @@ authors = [
 ]
 requires-python = ">=3.10"
 dependencies = [
+    "credchain",
     "fastmcp>=4.0.0,<5",
 ]
 
 [project.optional-dependencies]
-keyring = ["keyring>=25.0.0"]
+keyring = ["credchain[keyring]"]
 
 [dependency-groups]
 dev = [
@@ -52,6 +53,9 @@ exclude = ["*.log"]
 
 [tool.uv]
 default-groups = ["dev", "test"]
+
+[tool.uv.sources]
+credchain = { git = "https://github.com/stephaneberle9/python-credchain.git", branch = "main" }
 
 [tool.deptry]
 exclude = ["*.log", ".venv/"]

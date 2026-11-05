@@ -1,5 +1,5 @@
-from typing import Protocol
+"""Re-exported from credchain, where the framework-neutral providers live."""
 
+from credchain.protocol import CredentialsProvider
 
-class CredentialsProvider(Protocol):
-    def get_credentials(self) -> tuple[str | None, str | None]: ...
+__all__ = ["CredentialsProvider"]

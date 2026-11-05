@@ -5,6 +5,11 @@ username/password credentials for the backend services they connect to, from
 environment variables, OS keychain, or HTTP headers, with automatic fallback
 through a priority chain.
 
+The framework-neutral parts — the chain and the environment and keychain
+providers — live in [credchain](https://github.com/stephaneberle9/python-credchain)
+and are re-exported here unchanged, so existing imports keep working. This
+package adds the providers that read FastMCP's HTTP request headers.
+
 - [Installation](#installation)
 - [Usage](#usage)
   - [Credential provider chain](#credential-provider-chain)
