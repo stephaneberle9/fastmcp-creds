@@ -8,9 +8,14 @@ authors = [
 ]
 requires-python = ">=3.10"
 dependencies = [
-    "credchain",
+    "credchain>=0.1.0",
     "fastmcp>=4.0.0,<5",
 ]
+
+[project.urls]
+Homepage = "https://github.com/stephaneberle9/fastmcp-creds"
+Repository = "https://github.com/stephaneberle9/fastmcp-creds"
+Issues = "https://github.com/stephaneberle9/fastmcp-creds/issues"
 
 [project.optional-dependencies]
 keyring = ["credchain[keyring]"]
@@ -53,9 +58,6 @@ exclude = ["*.log"]
 
 [tool.uv]
 default-groups = ["dev", "test"]
-
-[tool.uv.sources]
-credchain = { git = "https://github.com/stephaneberle9/python-credchain.git", branch = "main" }
 
 [tool.deptry]
 exclude = ["*.log", ".venv/"]
